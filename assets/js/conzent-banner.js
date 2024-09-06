@@ -10,7 +10,6 @@ const accessConzentCookie = (name) => {
 };
 window.addEventListener("load", function() {
 	var conzent_id = accessConzentCookie('conzent_id');
-	console.log(conzent_id)
 	if(document.querySelector("#conzentId")){
 		if(conzent_id){
 			document.querySelector("#conzentId").innerHTML = conzent_id;
