@@ -1,10 +1,10 @@
 <?php
 /**
-Plugin Name: Conzent
+Plugin Name: Conzent Cookie banner plugin for WordPress – Conzent CMP - Google CMP & IAB TCF Certified
 Plugin URI: https://conzent.net/
-Description: WordPress cookie banner and cookie policy help you comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.).
+Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
 Author: Conzent ApS
-Version: 1.0.1
+Version: 1.02
 Author URI: https://conzent.net/
 Text Domain: conzent-banner
 **/
