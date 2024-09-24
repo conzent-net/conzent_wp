@@ -7,7 +7,7 @@
 * Plugin URI: https://conzent.net/
 * Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
 * Author: Conzent ApS
-* Version: 1.0.2
+* Version: 1.0.3
 * Author URI: https://conzent.net/
 * License:           GPLv3
 * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
@@ -253,8 +253,9 @@ function cnz_consent_id($atts, $content) {
 }
 function cnz_verifyDomain() {
  	$items = array();
-	$api_url = CNZ_APP_API_URL."/verify?domain=".sanitize_key($_SERVER['SERVER_NAME']);
+	$api_url = CNZ_APP_API_URL."/verify?domain=".sanitize_url($_SERVER['SERVER_NAME']);
 	$response_obj = wp_remote_get($api_url);
+	
 	$http_code = wp_remote_retrieve_response_code( $response_obj );
 	
 	if($http_code == 200){
