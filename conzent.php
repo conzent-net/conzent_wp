@@ -110,7 +110,7 @@ function cnz_banner_register_hooks(){
 	}
 }
 function add_cnz_js(){
-	echo __('<script id="conzentbanner" type="text/javascript" src="'.CNZ_APP_URL.'/app/sites_data/'.get_option( 'conzent_website_key' ).'/script.js"></script>');
+	echo __('<script id="conzentbanner" type="text/javascript" src="'.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js"></script>');
 }
 function cnz_add_menu_items() {
 
