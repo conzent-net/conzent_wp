@@ -29,7 +29,9 @@
 	border-radius: 0 2px 2px 0;
 	border: 1px solid #22b573;
 	cursor: pointer;
+	text-decoration:none;
 }
+
 .cnz-btn-normal{
 	
 	color: #FFF;
@@ -40,9 +42,11 @@
 	font-weight:normal;
 	border-radius:6px;
 }
-.cnz-btn-normal:hover{
+.cnz-btn:hover,.cnz-btn-normal:hover{
 	color: #FFF;
 	background: #000;
 	border: 1px solid #000;
+	text-decoration:none;
 }
 .cnz-success{color:#22b573;padding:10px;margin-bottom:10px;}
+.cnz-error{color:#e92121;padding:10px;margin-bottom:10px;}
