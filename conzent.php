@@ -43,6 +43,19 @@ function cnz_update_check() {
 	$plugin_version = $plugin_data['Version'];
 	$conzent_db_version = $plugin_version;
 
+	
+	
+	if (!get_site_option('conzent_verified')) {
+		if(get_site_option('conzent_website_key') && get_site_option('conzent_site_domain')){
+			add_option( 'conzent_verified','yes');
+		}
+		else{
+			add_option( 'conzent_verified','');
+		}
+    }
+	if (!get_site_option( 'conzent_error' )) {
+		add_option( 'conzent_error','');
+    }
 	if (get_site_option( 'conzent_db_version' ) != $conzent_db_version) {
 		update_option('conzent_db_version', $conzent_db_version);
     }
@@ -94,6 +107,8 @@ function cnz_callback($action)
 		add_option( 'conzent_site_domain','');
 		add_option( 'conzent_site_status','');
 		add_option( 'conzent_site_id','');
+		add_option( 'conzent_verified','');
+		add_option( 'conzent_error','');
 	}
 	else if($action == 'update')
 	{
@@ -107,7 +122,10 @@ function cnz_banner_register_hooks(){
 	}
 }
 function add_cnz_js(){
-	echo __('<script id="conzentbanner" type="text/javascript" src="'.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js"></script>');
+	$is_verified = get_option( 'conzent_verified');
+	if($is_verified == 'yes'){
+		echo __('<script id="conzentbanner" data-consent="necessary" type="text/javascript" src="'.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js"></script>');
+	}
 }
 function cnz_add_menu_items() {
 
@@ -147,6 +165,10 @@ function cnz_banner_setting() {
     	<div class="opt_key"><?php echo esc_html__('Status:','conzent');?></div>
         <div class="opt_val"> <?php echo (get_option( 'conzent_site_status') == 1 ? 'Active':'Inactive');?></div>
     </div>
+	<div class="opt_item">
+    	<div class="opt_key"><?php echo esc_html__('Verified:','conzent');?></div>
+        <div class="opt_val"> <?php echo get_option( 'conzent_verified');?></div>
+    </div>
     <div style="margin:10px 0px;"><a href="<?php echo admin_url('admin.php?page=cnz_banner_setting')?>" class="cnz-btn"><?php echo esc_html__('Change Setting','conzent');?></a></div>
 	<div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo CNZ_APP_URL;?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
     </div>
@@ -175,6 +197,7 @@ if(isset($_POST['action']) && $_POST['action']=='savesetting'){
 		update_option( 'conzent_site_domain', $site_info['domain'] );
 		update_option( 'conzent_site_status', $site_info['status'] );
 		update_option( 'conzent_site_id', $site_info['id'] );
+		update_option( 'conzent_verified', 'yes');
 		$error_found = 0;
 	}
 	else{
@@ -182,6 +205,8 @@ if(isset($_POST['action']) && $_POST['action']=='savesetting'){
 		update_option( 'conzent_site_domain', '');
 		update_option( 'conzent_site_status', '' );
 		update_option( 'conzent_site_id', '');
+		update_option( 'conzent_verified', 'no');
+		update_option( 'conzent_error', 'Website Key not found');
 		$error_found = 1;
 	}
 	update_option('conzent-gtm-id',$_POST['conzent_gtm_id']);
@@ -200,6 +225,8 @@ $conzent_gtm_id=get_option('conzent-gtm-id','');
 $conzent_data_layer=get_option('conzent-data-layer','');
 $conzent_site_id  = get_option( 'conzent_site_id');
 $conzent_website_key  = get_option( 'conzent_website_key');
+$conzent_verified  = get_option( 'conzent_verified');
+$conzent_error  = get_option( 'conzent_error','');
 
 
 	?>
@@ -229,6 +256,15 @@ $conzent_website_key  = get_option( 'conzent_website_key');
             <input type="text" name="conzent_data_layer" id="conzent_data_layer" value="<?php echo $conzent_data_layer;?>" placeholder="dataLayer" style="min-width:300px;"/>
           </div>
          </div>
+		 <?php if(get_option( 'conzent_verified')!=''){?>
+		<div class="opt_item"> 
+          <div class="opt_key"><?php echo esc_html__('Verified :','conzent');?> <?php echo get_option( 'conzent_verified');?></div>
+           
+         </div>
+		 
+		<?php 
+		}
+		 ?>
           <div class="action_box">
             <input type="hidden" name="action" value="savesetting" />
             <input type="submit" name="savesett" value="Save" class="cnz-btn"/>
@@ -272,7 +308,7 @@ function cnz_verifyWebsite($website_id) {
 	return $items;
 }
 function add_cnz_gtm_after_body() { 
-  if(get_option( 'conzent-gtm-id')){
+  if(get_option( 'conzent-gtm-id') && get_option( 'conzent_verified') == 'yes'){
   ?>
   <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo esc_js( get_option( 'conzent-gtm-id' ) ); ?>"
@@ -288,7 +324,7 @@ function add_cnz_gtm_js(){
 	} else {
 		$data_layer = get_option( 'conzent-data-layer' );
 	}
-	if(get_option( 'conzent-gtm-id')){
+	if(get_option( 'conzent-gtm-id') && get_option( 'conzent_verified') == 'yes'){
 ?>
 	<!-- Google Tag Manager -->
 	<script>
