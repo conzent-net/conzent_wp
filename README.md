@@ -15,6 +15,14 @@ Easily set up cookie banner or cookie notice and cookie policy page for GDPR (DS
 
 Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
 
+== 3rd. party services == 
+When using the Conzent CMP Plugin you will communicate with our backend, where you will need to create an account. Its also here that you will make all layout, text and color changes. All your settings are placed in 2 seperate JSON files, that our script reads. That script uses your settings and configuration to handle the consent banner.
+We do not send or recieve any personal information. the only thing we send is your domain name and the Website key that you enter in the plugin.
+You can find our website here https://conzent.net and the privacy policy here: https://conzent.net/privacy/
+
+We also make it easy for you to use Google Tag Manager. So the only thing you need to do is to copy the GTM-xxxxxx tag from your GTM Container and we insert the same script as Google would on your website. It cannot get any easier. Also we load GTM as soon as possible so that consent is secure.
+For google see their website here https://tagmanager.google.com and their privacy policy here https://policies.google.com/privacy?gl=DK&hl=en-US
+
 == Key Features == 
 
 – **Automatic scanning**: Single-click automatic scanning and categorization of cookies.
@@ -61,16 +69,16 @@ Our [WordPress cookie plugin user guide](https://conzent.net/installation-guide/
 
 Access the following features by subscribing to a premium plan (Single, Pro, or Enterprise) on the Conzent web app account. [See all features and compare plans](https://conzent.net/pricing/)
 
-&#9989; **Increased pageviews limit**: Increase your pageviews limit, extending from 100,000 to unlimited. </li>
-&#9989; **Enhanced scanning capacity**: Our tool can scan up to 8,000 pages in a single scan. </li>
-&#9989; **GDPR/US laws template**: Offer opt-in consent banner for GDPR and opt-out banner for US privacy laws such as CCPA/CPRA. </li>
-&#9989; **Global Privacy Control**: Respect the user’s GPC setting if enabled. </li>
-&#9989; **TCF v2.2 integration**: We seamlessly integrate with TCF v2.2, the IAB Europe Consent Framework for Publishers. Our registered CMP ID is 401. </li>
-&#9989; **Advanced customization**: Customize your banner with advanced design options such as custom CSS to suit your brand's identity. </li>
-&#9989; **Popup layout**: Add a cookie notification in the form of a ‘Popup’. </li>
-&#9989; **Geo-targeting banner**: Target your cookie banner based on location, including GDPR banner for Worldwide, EU & UK, and Other countries, as well as CCPA/CPRA banner for Worldwide, United States, and Other countries. </li>
-&#9989; **Scheduled scans**: Set up scans on a schedule that works for you. </li>
-&#9989; **Custom branding**: Add your brand logo to the cookie banner for a personalized touch. </li>
+&#9989; **Increased pageviews limit**: Increase your pageviews limit, extending from 100,000 to unlimited.
+&#9989; **Enhanced scanning capacity**: Our tool can scan up to 8,000 pages in a single scan.
+&#9989; **GDPR/US laws template**: Offer opt-in consent banner for GDPR and opt-out banner for US privacy laws such as CCPA/CPRA.
+&#9989; **Global Privacy Control**: Respect the user’s GPC setting if enabled.
+&#9989; **TCF v2.2 integration**: We seamlessly integrate with TCF v2.2, the IAB Europe Consent Framework for Publishers. Our registered CMP ID is 401.
+&#9989; **Advanced customization**: Customize your banner with advanced design options such as custom CSS to suit your brand's identity.
+&#9989; **Popup layout**: Add a cookie notification in the form of a ‘Popup’. 
+&#9989; **Geo-targeting banner**: Target your cookie banner based on location, including GDPR banner for Worldwide, EU & UK, and Other countries, as well as CCPA/CPRA banner for Worldwide, United States, and Other countries. 
+&#9989; **Scheduled scans**: Set up scans on a schedule that works for you. 
+&#9989; **Custom branding**: Add your brand logo to the cookie banner for a personalized touch. 
 
 = NOTE: INSTALLING THIS PLUGIN ALONE DOES NOT MAKE YOUR SITE GDPR AND CCPA COMPLIANT. SINCE EACH SITE USES DIFFERENT COOKIES, YOU NEED TO ENSURE YOU HAVE THE NECESSARY CONFIGURATIONS IN PLACE WITH A SUPPORTING COOKIE NOTICE. = 
 
