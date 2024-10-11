@@ -1,15 +1,19 @@
 <?php
 /**
-* @link            https://conzent.net/
+* @link https://conzent.net/
 *
 * @wordpress-plugin
 * Plugin Name: Conzent - Cookie Banner - Conzent CMP - Google CMP & IAB TCF Certified
-* Plugin URI: https://conzent.net/
+* Plugin URI: https://conzent.net/download/
 * Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
-* Version: 1.0.4
-* Author URI: https://conzent.net/
-* License:           GPLv3
-* License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+* Version: 1.0.7
+* Requires at least: 5.8
+* Requires PHP: 7.3
+* Code Name: Conzent
+* Author: Conzent ApS
+* Author URI: https://conzent.net/about/
+* License: GPLv3
+* License URI: https://www.gnu.org/licenses/gpl-3.0.html
 * Text Domain: conzent
 **/
 
@@ -123,7 +127,7 @@ function cnz_banner_register_hooks(){
 function add_cnz_js(){
 	$is_verified = get_option( 'conzent_verified');
 	if($is_verified == 'yes'){
-		echo __('<script id="conzentbanner" data-consent="necessary" type="text/javascript" src="'.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js"></script>');
+		echo __('<script id=\'conzentbanner\' data-consent=\'necessary\' type=\'text/javascript\' src=\''.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js\'></script>','conzent');
 	}
 }
 function cnz_add_menu_items() {
@@ -142,34 +146,34 @@ function cnz_add_menu_items() {
 }
 function cnz_banner_setting() {
 	?>
-    <div class="opt_welcome"><h2><img src="<?php echo plugin_dir_url(__FILE__) . 'conzent-logo.png';?>" height="35px" />&nbsp;<?php echo esc_html__('Welcome to Conzent Banner','conzent');?></h2></div>
+    <div class="opt_welcome"><h2><img src="<?php echo esc_attr(plugin_dir_url(__FILE__) . 'conzent-logo.png');?>" height="35px" />&nbsp;<?php echo esc_html__('Welcome to Conzent Banner','conzent');?></h2></div>
     <div class="opt_box_welcome">
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Website Key :','conzent');?></div>
-        <div class="opt_val"> <?php echo get_option( 'conzent_website_key');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_website_key'));?></div>
     </div>
     <!--<div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Website Id :','conzent');?></div>
-        <div class="opt_val"> <?php echo get_option( 'conzent_site_id');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_id'));?></div>
     </div>-->
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Site Name:','conzent');?></div>
-        <div class="opt_val"> <?php echo get_option( 'conzent_site_name');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_name'));?></div>
      </div>
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Domain:','conzent');?></div>
-        <div class="opt_val"> <?php echo get_option( 'conzent_site_domain');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_domain'));?></div>
     </div>
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Status:','conzent');?></div>
-        <div class="opt_val"> <?php echo (get_option( 'conzent_site_status') == 1 ? 'Active':'Inactive');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_status') == 1 ? 'Active':'Inactive');?></div>
     </div>
 	<div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Verified:','conzent');?></div>
-        <div class="opt_val"> <?php echo get_option( 'conzent_verified');?></div>
+        <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_verified'));?></div>
     </div>
     <div style="margin:10px 0px;"><a href="<?php echo admin_url('admin.php?page=cnz_banner_setting')?>" class="cnz-btn"><?php echo esc_html__('Change Setting','conzent');?></a></div>
-	<div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo CNZ_APP_URL;?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
+	<div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo esc_url(CNZ_APP_URL);?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
     </div>
     
     <?php
@@ -183,12 +187,12 @@ function cnz_setting_actions()
 	}
 	if(!$is_admin){
 		$redirect_url = admin_url('admin.php?page=conzent');
-		echo __('<script>window.location = "'.esc_url($redirect_url).'"</script>');
+		echo __('<script>window.location = \''.esc_url($redirect_url).'\'</script>','conzent');
 		exit;
 	}
 $msg ='';	
 if(isset($_POST['action']) && $_POST['action']=='savesetting'){
-	$site_info = cnz_verifyWebsite($_POST['conzent_website_key']);
+	$site_info = cnz_verifyWebsite(wp_unslash($_POST['conzent_website_key']));
 	$error_found = 0;
 	  if(!empty($site_info) && array_key_exists("domain",$site_info)){
 		update_option( 'conzent_website_key',$site_info['website_key'] );
@@ -208,8 +212,8 @@ if(isset($_POST['action']) && $_POST['action']=='savesetting'){
 		update_option( 'conzent_error', 'Website Key not found');
 		$error_found = 1;
 	}
-	update_option('conzent-gtm-id',$_POST['conzent_gtm_id']);
-	update_option('conzent-data-layer',$_POST['conzent_data_layer']);
+	update_option('conzent-gtm-id',wp_unslash($_POST['conzent_gtm_id']));
+	update_option('conzent-data-layer',wp_unslash($_POST['conzent_data_layer']));
 	if($error_found){
 		$msg = esc_html__('Website Key not found','conzent');
 		$cnz_css_class = 'error';
@@ -231,33 +235,33 @@ $conzent_error  = get_option( 'conzent_error','');
 	?>
     <div class="opt_welcome"><h2><img src="<?php echo plugin_dir_url(__FILE__) . 'conzent-logo.png';?>" height="35px" />&nbsp;<?php echo esc_html__('Conzent Banner Setting','conzent');?></h2></div>
     <div class="opt_box_setting">
-    <div><?php if($msg){ echo '<div class="cnz-'.$cnz_css_class.'">'.$msg.'</div>';}?></div>
+    <div><?php if($msg){ echo __('<div class=\'cnz-'.$cnz_css_class.'\'>'.$msg.'</div>','conzent');}?></div>
     	<form method="post" action="" name="frmsetting">
         <!--<div class="opt_item">
-          		<div class="opt_key"><?php echo esc_html__('Website ID :','conzent');?> <span style="font-weight:normal;"><?php echo $conzent_site_id;?></span></div>
+          		<div class="opt_key"><?php echo esc_html__('Website ID :','conzent');?> <span style="font-weight:normal;"><?php echo esc_attr($conzent_site_id);?></span></div>
          	</div>
 		--> 
          <div class="opt_item">
           <div class="opt_key"><?php echo esc_html__('Website Key :','conzent');?></div>
           <div class="opt_val">
-            <input type="text" name="conzent_website_key" id="conzent_website_key" value="<?php echo $conzent_website_key;?>" style="min-width:300px;"/>
+            <input type="text" name="conzent_website_key" id="conzent_website_key" value="<?php echo esc_attr($conzent_website_key);?>" style="min-width:300px;"/>
           </div>
          </div>
         <div class="opt_item">
           <div class="opt_key"><?php echo esc_html__('Google Tag Manager ID :','conzent');?></div>
            <div class="opt_val">
-            <input type="text" name="conzent_gtm_id" id="conzent_gtm_id" value="<?php echo $conzent_gtm_id;?>" style="min-width:300px;"/>
+            <input type="text" name="conzent_gtm_id" id="conzent_gtm_id" value="<?php echo esc_attr($conzent_gtm_id);?>" style="min-width:300px;"/>
           </div>
          </div>
          <div class="opt_item"> 
           <div class="opt_key"><?php echo esc_html__('Google Tag Data layer :','conzent');?></div>
            <div class="opt_val">
-            <input type="text" name="conzent_data_layer" id="conzent_data_layer" value="<?php echo $conzent_data_layer;?>" placeholder="dataLayer" style="min-width:300px;"/>
+            <input type="text" name="conzent_data_layer" id="conzent_data_layer" value="<?php echo esc_attr($conzent_data_layer);?>" placeholder="dataLayer" style="min-width:300px;"/>
           </div>
          </div>
 		 <?php if(get_option( 'conzent_verified')!=''){?>
 		<div class="opt_item"> 
-          <div class="opt_key"><?php echo esc_html__('Verified :','conzent');?> <?php echo get_option( 'conzent_verified');?></div>
+          <div class="opt_key"><?php echo esc_html__('Verified :','conzent');?> <?php echo esc_attr(get_option( 'conzent_verified'));?></div>
            
          </div>
 		 
@@ -269,7 +273,7 @@ $conzent_error  = get_option( 'conzent_error','');
             <input type="submit" name="savesett" value="Save" class="cnz-btn"/>
           </div>
         </form>
-        <div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo CNZ_APP_URL;?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
+        <div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo esc_url(CNZ_APP_URL);?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
     </div>
 <?php
 }
@@ -296,7 +300,7 @@ function cnz_consent_id($atts, $content) {
 }
 function cnz_verifyWebsite($website_id) {
  	$items = array();
-	$api_url = CNZ_APP_API_URL."/verify?website_id=".$website_id;
+	$api_url = esc_url(CNZ_APP_API_URL."/verify?website_id=".$website_id);
 	$response_obj = wp_remote_get($api_url);
 	
 	$http_code = wp_remote_retrieve_response_code( $response_obj );

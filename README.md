@@ -5,7 +5,7 @@ Tags: GDPR, CCPA, cookie notice, DSGVO, cookie consent, cookie banner, eu cookie
 Requires at least: 5.0.0
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 1.0.4
+Stable tag: 1.0.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -176,6 +176,14 @@ Every time we update the plugin, you will see a notification on the installed pl
 
 
 == Changelog ==
+= 1.0.7 =
+* Fixed WP escaping
+
+= 1.0.6 =
+* Fixed encoding
+
+= 1.0.5 =
+* Edited the readme with clarification to the 3rd.party services
 
 = 1.0.4 =
 * manually get website info by website key
