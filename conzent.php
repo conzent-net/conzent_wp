@@ -6,7 +6,7 @@
 * Plugin Name: Conzent - Cookie Banner - Conzent CMP - Google CMP & IAB TCF Certified
 * Plugin URI: https://conzent.net/download/
 * Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
-* Version: 1.0.7
+* Version: 1.0.8
 * Requires at least: 5.8
 * Requires PHP: 7.3
 * Code Name: Conzent
@@ -28,7 +28,8 @@ add_action('init', 'cnz_banner_add_shortcode');
 add_action('admin_menu', 'cnz_add_menu_items');
 add_action('plugins_loaded', 'cnz_update_check');
 add_action('activated_plugin', 'cnz_save_activation_error');
-add_action('wp_body_open','add_cnz_gtm_after_body');
+add_action('wp_body_open','cnz_add_gtm_after_body');
+ 
 /** Conzent web app URL */
 if ( ! defined( 'CNZ_APP_URL' ) ) {
 	define( 'CNZ_APP_URL', 'https://conzent.net/app' );
@@ -101,7 +102,6 @@ function cnzbanneradmin()
 		wp_enqueue_style('cnz-banner-admin-css', plugins_url('assets/css/conzent-banner-admin.css', __FILE__), false, false, 'screen');
 	}
 }
-
 function cnz_callback($action)
 {
 	if($action == 'install'){
@@ -120,14 +120,16 @@ function cnz_callback($action)
 }
 function cnz_banner_register_hooks(){
 	if (!is_admin()) {
-		add_action( 'wp_head','add_cnz_js', - 9998 );
-		add_action( 'wp_head','add_cnz_gtm_js', - 9996 );
+		add_action( 'wp_head','cnz_js', - 9998 );
+		add_action( 'wp_head','cnz_gtm_js', - 9996 );
 	}
 }
-function add_cnz_js(){
+function cnz_js(){
 	$is_verified = get_option( 'conzent_verified');
 	if($is_verified == 'yes'){
-		echo __('<script id=\'conzentbanner\' data-consent=\'necessary\' type=\'text/javascript\' src=\''.CNZ_APP_URL.'/sites_data/'.get_option( 'conzent_website_key' ).'/script.js\'></script>','conzent');
+	?>
+	<script id='conzentbanner' data-consent='necessary' type='text/javascript' src='<?php echo esc_url(CNZ_APP_URL."/sites_data/".get_option( 'conzent_website_key' ));?>/script.js'></script>
+	<?php 
 	}
 }
 function cnz_add_menu_items() {
@@ -145,8 +147,11 @@ function cnz_add_menu_items() {
 	
 }
 function cnz_banner_setting() {
+	$setting_url= esc_url(admin_url('admin.php?page=cnz_banner_setting'));
+	$web_url = esc_url(CNZ_APP_URL);
+	$logo_url = plugin_dir_url(__FILE__).'conzent-logo.png';
 	?>
-    <div class="opt_welcome"><h2><img src="<?php echo esc_attr(plugin_dir_url(__FILE__) . 'conzent-logo.png');?>" height="35px" />&nbsp;<?php echo esc_html__('Welcome to Conzent Banner','conzent');?></h2></div>
+    <div class="opt_welcome"><h2><img src="<?php echo esc_attr($logo_url);?>" height="35px" />&nbsp;<?php echo esc_html__('Welcome to Conzent Banner','conzent');?></h2></div>
     <div class="opt_box_welcome">
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Website Key :','conzent');?></div>
@@ -172,8 +177,8 @@ function cnz_banner_setting() {
     	<div class="opt_key"><?php echo esc_html__('Verified:','conzent');?></div>
         <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_verified'));?></div>
     </div>
-    <div style="margin:10px 0px;"><a href="<?php echo admin_url('admin.php?page=cnz_banner_setting')?>" class="cnz-btn"><?php echo esc_html__('Change Setting','conzent');?></a></div>
-	<div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo esc_url(CNZ_APP_URL);?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
+    <div style="margin:10px 0px;"><a href="<?php echo $setting_url;?>" class="cnz-btn"><?php echo esc_html__('Change Setting','conzent');?></a></div>
+	<div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo $web_url;?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
     </div>
     
     <?php
@@ -187,12 +192,13 @@ function cnz_setting_actions()
 	}
 	if(!$is_admin){
 		$redirect_url = admin_url('admin.php?page=conzent');
-		echo __('<script>window.location = \''.esc_url($redirect_url).'\'</script>','conzent');
+		wp_redirect(esc_url($redirect_url));
 		exit;
 	}
-$msg ='';	
-if(isset($_POST['action']) && $_POST['action']=='savesetting'){
-	$site_info = cnz_verifyWebsite(wp_unslash($_POST['conzent_website_key']));
+$msg ='';
+if ( isset( $_POST['savesetting_nonce'] ) && wp_verify_nonce( $_POST['savesetting_nonce'], 'savesetting' ) ) {	
+	
+	$site_info = cnz_verifyWebsite(sanitize_text_field($_POST['conzent_website_key']));
 	$error_found = 0;
 	  if(!empty($site_info) && array_key_exists("domain",$site_info)){
 		update_option( 'conzent_website_key',$site_info['website_key'] );
@@ -212,8 +218,8 @@ if(isset($_POST['action']) && $_POST['action']=='savesetting'){
 		update_option( 'conzent_error', 'Website Key not found');
 		$error_found = 1;
 	}
-	update_option('conzent-gtm-id',wp_unslash($_POST['conzent_gtm_id']));
-	update_option('conzent-data-layer',wp_unslash($_POST['conzent_data_layer']));
+	update_option('conzent-gtm-id',sanitize_text_field($_POST['conzent_gtm_id']));
+	update_option('conzent-data-layer',sanitize_text_field($_POST['conzent_data_layer']));
 	if($error_found){
 		$msg = esc_html__('Website Key not found','conzent');
 		$cnz_css_class = 'error';
@@ -235,7 +241,7 @@ $conzent_error  = get_option( 'conzent_error','');
 	?>
     <div class="opt_welcome"><h2><img src="<?php echo plugin_dir_url(__FILE__) . 'conzent-logo.png';?>" height="35px" />&nbsp;<?php echo esc_html__('Conzent Banner Setting','conzent');?></h2></div>
     <div class="opt_box_setting">
-    <div><?php if($msg){ echo __('<div class=\'cnz-'.$cnz_css_class.'\'>'.$msg.'</div>','conzent');}?></div>
+    <div><?php if($msg){ echo '<div class=\'cnz-'.$cnz_css_class.'\'>'.$msg.'</div>';}?></div>
     	<form method="post" action="" name="frmsetting">
         <!--<div class="opt_item">
           		<div class="opt_key"><?php echo esc_html__('Website ID :','conzent');?> <span style="font-weight:normal;"><?php echo esc_attr($conzent_site_id);?></span></div>
@@ -270,15 +276,13 @@ $conzent_error  = get_option( 'conzent_error','');
 		 ?>
           <div class="action_box">
             <input type="hidden" name="action" value="savesetting" />
+			<?php wp_nonce_field( 'savesetting', 'savesetting_nonce' ); ?>
             <input type="submit" name="savesett" value="Save" class="cnz-btn"/>
           </div>
         </form>
         <div style="margin-top:20px;margin-bottom:20x;"><a href="<?php echo esc_url(CNZ_APP_URL);?>" class="cnz-btn-normal"><?php echo esc_html__('All settings is done in the conzent.net/app','conzent');?></a></div>
     </div>
 <?php
-}
-function cnz_get_siteinfo(){
-	
 }
 function cnz_banner_add_shortcode(){
 	add_shortcode('CONZENT_CONSENT_ID', 'cnz_consent_id');
@@ -292,7 +296,7 @@ function cnz_consent_id($atts, $content) {
 	$result_content = '
 	<div class="cnz-tracking-box">
 		<div class="tracking-inner">
-			<div class="cnz-label">Conzent Consent ID</div>
+			<div class="cnz-label">'.esc_html__('Conzent Consent ID','conzent').'</div>
 			<div class="cnz-val"><span id="conzentId"></span></div>
 		</div>
 	</div>';
@@ -310,7 +314,7 @@ function cnz_verifyWebsite($website_id) {
 	}
 	return $items;
 }
-function add_cnz_gtm_after_body() { 
+function cnz_add_gtm_after_body() { 
   if(get_option( 'conzent-gtm-id') && get_option( 'conzent_verified') == 'yes'){
   ?>
   <!-- Google Tag Manager (noscript) -->
@@ -320,7 +324,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <?php
   }
 }
-function add_cnz_gtm_js(){
+function cnz_gtm_js(){
 
 	if ( empty( get_option( 'conzent-data-layer' ) ) ) {
 		$data_layer = 'dataLayer';
