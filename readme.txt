@@ -1,15 +1,15 @@
 === Conzent - Cookie Banner - Conzent CMP - Google CMP & IAB TCF Certified ===
 Contributors: conzent
 Donate link: https://conzent.net/ 
-Tags: cookie notice, cookie consent, cookie banner, eprivacy, gdpr consent
+Tags: GDPR, CCPA, cookie notice, DSGVO, cookie consent, cookie banner, eu cookie law, conzent, eprivacy, gdpr consent
 Requires at least: 5.0.0
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Easily set up cookie banner or cookie notice and cookie policy page for GDPR (DSGVO, RGPD) compliance. Also supports other major global laws.
+Easily set up cookie banner or cookie notice and cookie policy page for GDPR (DSGVO, RGPD) compliance. Also supports CCPA/CPRA and other major global laws.
 
 == Description ==
 
@@ -176,6 +176,9 @@ Every time we update the plugin, you will see a notification on the installed pl
 
 
 == Changelog ==
+= 1.0.9 =
+* Removed Outbound calling
+
 = 1.0.8 =
 * Fixed WP security
 

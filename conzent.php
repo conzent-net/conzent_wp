@@ -6,7 +6,7 @@
 * Plugin Name: Conzent - Cookie Banner - Conzent CMP - Google CMP & IAB TCF Certified
 * Plugin URI: https://conzent.net/download/
 * Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
-* Version: 1.0.8
+* Version: 1.0.9
 * Requires at least: 5.8
 * Requires PHP: 7.3
 * Code Name: Conzent
@@ -160,7 +160,7 @@ function cnz_banner_setting() {
     <!--<div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Website Id :','conzent');?></div>
         <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_id'));?></div>
-    </div>-->
+    </div>
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Site Name:','conzent');?></div>
         <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_name'));?></div>
@@ -172,7 +172,7 @@ function cnz_banner_setting() {
     <div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Status:','conzent');?></div>
         <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_site_status') == 1 ? 'Active':'Inactive');?></div>
-    </div>
+    </div>-->
 	<div class="opt_item">
     	<div class="opt_key"><?php echo esc_html__('Verified:','conzent');?></div>
         <div class="opt_val"> <?php echo esc_attr(get_option( 'conzent_verified'));?></div>
@@ -210,13 +210,14 @@ if ( isset( $_POST['savesetting_nonce'] ) && wp_verify_nonce( $_POST['savesettin
 		$error_found = 0;
 	}
 	else{
+        update_option( 'conzent_website_key',$_POST['conzent_website_key'] );
 		update_option( 'conzent_site_name', '');
 		update_option( 'conzent_site_domain', '');
-		update_option( 'conzent_site_status', '' );
+		update_option( 'conzent_site_status', '1' );
 		update_option( 'conzent_site_id', '');
-		update_option( 'conzent_verified', 'no');
-		update_option( 'conzent_error', 'Website Key not found');
-		$error_found = 1;
+		update_option( 'conzent_verified', 'yes');
+		update_option( 'conzent_error', '');
+		$error_found = 0;
 	}
 	update_option('conzent-gtm-id',sanitize_text_field($_POST['conzent_gtm_id']));
 	update_option('conzent-data-layer',sanitize_text_field($_POST['conzent_data_layer']));
@@ -306,9 +307,9 @@ function cnz_verifyWebsite($website_id) {
  	$items = array();
 	$api_url = esc_url(CNZ_APP_API_URL."/verify?website_id=".$website_id);
 	$response_obj = wp_remote_get($api_url);
-	
+    
 	$http_code = wp_remote_retrieve_response_code( $response_obj );
-	
+
 	if($http_code == 200){
 		$items = json_decode(wp_remote_retrieve_body( $response_obj ),true);
 	}
