@@ -1,4 +1,0 @@
-.cnz-tracking-box{float:left;width:100%;margin:10px auto;}
-.cnz-label{font-weight:bold;margin-right:10px;}
-.cnz-val{border:2px dashed #ccc;padding:5px;}
-.tracking-inner{display:flex;align-items: center;padding:10px;}
