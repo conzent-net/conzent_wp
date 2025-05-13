@@ -176,6 +176,7 @@ Every time we update the plugin, you will see a notification on the installed pl
 
 
 == Changelog ==
+
 = 1.0.11 =
 * added WordPress Consent API support
 
