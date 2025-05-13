@@ -6,7 +6,7 @@
 * Plugin Name: Conzent - Cookie Banner - Conzent CMP - Google CMP & IAB TCF Certified
 * Plugin URI: https://conzent.net/download/
 * Description: Conzent CMP WordPress Cookie Banner and Cookie Policy generator. IAB/TCF and Google CMP Certified - Comply with the major data protection laws (GDPR, ePrivacy, CCPA, LGPD, etc.)
-* Version: 1.0.10
+* Version: 1.0.11
 * Requires at least: 5.8
 * Requires PHP: 7.3
 * Code Name: Conzent
@@ -21,13 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;// Abort if this file is accessed directly.
 }
 
-add_action('wp_enqueue_scripts', 'cnzbannerfront');
-add_action('admin_enqueue_scripts','cnzbanneradmin');
+add_action('wp_enqueue_scripts', 'cnzbannerfront',PHP_INT_MAX - 99);
 add_action('init', 'cnz_banner_register_hooks');
 add_action('init', 'cnz_banner_add_shortcode');
 add_action('admin_menu', 'cnz_add_menu_items');
 add_action('plugins_loaded', 'cnz_update_check');
 add_action('activated_plugin', 'cnz_save_activation_error');
+add_action('admin_enqueue_scripts','cnzbanneradmin');
 add_action('wp_body_open','cnz_add_gtm_after_body');
  
 /** Conzent web app URL */
@@ -39,6 +39,9 @@ if ( ! defined( 'CNZ_APP_URL' ) ) {
 if ( ! defined( 'CNZ_APP_API_URL' ) ) {
 	define( 'CNZ_APP_API_URL', 'https://conzent.net/app/api/v1' );
 }
+$plugin = plugin_basename( __FILE__ );
+add_filter("wp_consent_api_registered_{$plugin}", '__return_true' );
+
 function cnz_update_check() {
 	if (!function_exists('get_plugin_data')) {
          require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -89,11 +92,28 @@ function cnz_activate() {
   /* activation code here */
 }
 register_activation_hook( __FILE__, 'cnz_activate' );
+function is_wpconsentapi_enabled() {
+	return class_exists( 'WP_CONSENT_API' );
+}
+function is_gsk_enabled() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		return is_plugin_active( 'google-site-kit/google-site-kit.php' );
+	}
 function cnzbannerfront()
 {
 	if (!is_admin()) {
 		wp_enqueue_style('cnz-banner-css', plugins_url('assets/css/conzent-banner.css', __FILE__), false, false, 'screen');
-		wp_enqueue_script('cnz-banner-js',plugins_url('assets/js/conzent-banner.js', __FILE__),false, false,true);
+		
+		wp_enqueue_script('cnz-banner',plugins_url('assets/js/conzent-banner.js', __FILE__),false, false,true);
+		if ( true === is_wpconsentapi_enabled() ) {
+		    wp_add_inline_script( 'cnz-banner', 'const _cnzWca = true;', 'before' );
+			if ( true === is_gsk_enabled() ) {
+				wp_add_inline_script( 'cnz-banner', 'const _cnzGsk = true;', 'before' );
+			}
+		}
+	
 	}
 }
 function cnzbanneradmin()
@@ -121,7 +141,7 @@ function cnz_callback($action)
 function cnz_banner_register_hooks(){
 	if (!is_admin()) {
 		add_action( 'wp_head','cnz_js', - 9998 );
-		add_action( 'wp_head','cnz_gtm_js', - 9996 );
+		add_action( 'wp_head','cnz_gtm_js', - 9999 );
 	}
 }
 function cnz_js(){
